@@ -12,7 +12,10 @@ exports.index = function (req, res, next) {
     if (err) {
       return next(err);
     }
-    res.send(items);
+    res.render('index', { 
+      topics: items,
+      pageTitle: tag && (tag + '版块')
+    });
   });
 };
 

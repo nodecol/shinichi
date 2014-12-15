@@ -3,6 +3,7 @@ var express = require('express');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var passport = require('passport');
+var _ = require('lodash');
 
 var config = require('./config');
 require('./models/_db');
@@ -45,6 +46,11 @@ app.use(express.static(require('path').join(__dirname, 'public')));
 
 // routor --> controller
 app.use('/', routor);
+
+//views  --  config
+_.extend(app.locals, {
+  config: config
+});
 
 // error handlers
 if (config.debug) {

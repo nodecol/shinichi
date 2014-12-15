@@ -12,15 +12,9 @@ var config = {
   get mini_assets() { return !this.debug; }, // 是否启用静态文件的合并压缩，详见视图中的Loader
 
   name: 'Shinichi',
-  description: '',
-  keywords: '',
-
-  // 添加到 html head 中的信息
-  site_headers: [
-    '<meta name="author" content="EDP@TAOBAO" />'
-  ],
-  site_logo: '/public/images/cnodejs_light.svg', // default is `name`
-  site_icon: '/public/images/cnode_icon_32.png', // 默认没有 favicon, 这里填写网址
+  description: 'women desc',
+  keywords: 'xxxx,xxx',
+  author: 'sk',
 
   // 社区的域名
   host: 'localhost',

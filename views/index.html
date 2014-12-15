@@ -1,13 +1,20 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+<div id="posts">
 
-
-  </body>
-</html>
+<% if(topics.length == 0) { %>
+   <div class="post">没有内容了</div>
+<% } else { %>
+	<% topics.forEach(function (topic) { %>
+        <div class="thumbnail post">
+            <img src="<%= topic.desc %>" alt="" />
+            <div class="caption">
+            <label>作者:</label>
+            <a href="" class="author">
+               <%= topic.author_id%>
+            </a>
+            <div class="clear"></div>
+            <span><%= topic.title%></span>
+        </div>
+        </div>
+    <% }) %>
+<% } %>
+</div>
