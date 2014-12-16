@@ -134,17 +134,17 @@ exports.delTopicsByAuthorId = function (authorId, callback) {
  * @param {String} desc 描述
  * @param {String} content 内容
  * @param {String} tag 标签
- * @param {String} quoUrl 引用地址
+ * @param {String} quoteUrl 引用地址
  * @param {String} authorId 创建者id
  * @param {Function} callback 回调函数
  */
-exports.createTopic = function (title, desc, content, tag, quoUrl, authorId, callback) {
+exports.createTopic = function (title, desc, content, tag, quoteUrl, authorId, callback) {
   var topic = new Topic();
   topic.title = title;
   topic.desc = desc;
   topic.content = content;
   topic.tag = tag;
-  topic.quo_url = quoUrl;
+  topic.quote_url = quoteUrl;
   topic.author_id = authorId;
   topic.save(callback);
 };

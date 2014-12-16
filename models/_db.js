@@ -27,10 +27,10 @@ var TopicSchema = new Schema({
   title: { type: String },
   desc: { type: String },
   content: { type: String },
-  tag: {type: String},
+  tag: {type: [String]},
   author_id: { type: ObjectId },
   is_html: { type: Boolean },
-  quo_url: { type: String}, // 引用地址
+  quote_url: { type: String}, // 引用地址
   update_time: { type: Date, default: Date.now },
   create_time: { type: Date, default: Date.now }
 });
@@ -43,7 +43,7 @@ var ReplySchema = new Schema({
   content: { type: String },
   topic_id: { type: ObjectId},
   author_id: { type: ObjectId },
-  reply_id: { type: ObjectId },
+  reply_id: { type: ObjectId }, // 回复的回复id
   is_html: { type: Boolean },
   update_time: { type: Date, default: Date.now },
   create_time: { type: Date, default: Date.now }
@@ -82,13 +82,32 @@ if (require.main === module) {
   });
 
   var sendTopicToDb = function (authorId) {
-    var topic = new exports.Topic();
-    topic.title = "【晒】不 准 笑";
-    topic.desc = "http://img5.douban.com/view/group_topic/large/public/p23211067.jpg";
-    topic.content = "";
-    topic.author_id = authorId;
-    topic.tag = "meiguo1";
-    topic.save(function (err, topic) {
+    var list = [
+      'http://img.itc.cn/photo/jldClOfOUVz',
+      'http://img.itc.cn/photo/jlJgTBc3cqp',
+      'http://img.itc.cn/photo/o3SdUj4vxfD',
+      'http://img.itc.cn/photo/jtEfeLgW6mt',
+      'http://img.itc.cn/photo/od0fLYfxHDE',
+      'http://img.itc.cn/photo/jMYDt1pmv31',
+      'http://img.itc.cn/photo/jCCbUO3gAPH',
+      'http://img.itc.cn/photo/jdD06LhezMD',
+      'http://img.itc.cn/photo/jAmoDIzv6uf',
+      'http://img.itc.cn/photo/jA6bxN8u1Vk',
+      'http://img.itc.cn/photo/jdDh3t5J4Lz',
+      'http://img.itc.cn/photo/jCCbUO3gAPH'
+    ];
+    list = list.concat(list.slice());
+    var listdata = [];
+    for (var i = 0; i < list.length; i++) {
+      var temp = {};
+      temp.title = "【晒】不 准 笑";
+      temp.desc = list[i];
+      temp.content = "";
+      temp.author_id = authorId;
+      temp.tag = ["meiguo"];
+      listdata.push(temp);
+    }
+    exports.Topic.create(listdata, function (err) {
       if (err) {
         console.log(err);
       }
