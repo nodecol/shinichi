@@ -83,18 +83,21 @@ if (require.main === module) {
 
   var sendTopicToDb = function (authorId) {
     var list = [
-      'http://img.itc.cn/photo/jldClOfOUVz',
-      'http://img.itc.cn/photo/jlJgTBc3cqp',
-      'http://img.itc.cn/photo/o3SdUj4vxfD',
-      'http://img.itc.cn/photo/jtEfeLgW6mt',
-      'http://img.itc.cn/photo/od0fLYfxHDE',
-      'http://img.itc.cn/photo/jMYDt1pmv31',
-      'http://img.itc.cn/photo/jCCbUO3gAPH',
-      'http://img.itc.cn/photo/jdD06LhezMD',
-      'http://img.itc.cn/photo/jAmoDIzv6uf',
-      'http://img.itc.cn/photo/jA6bxN8u1Vk',
-      'http://img.itc.cn/photo/jdDh3t5J4Lz',
-      'http://img.itc.cn/photo/jCCbUO3gAPH'
+      '930_619_http://img.itc.cn/photo/jldClOfOUVz',
+      '930_620_http://img.itc.cn/photo/jlJgTBc3cqp',
+      '510_766_http://img.itc.cn/photo/o3SdUj4vxfD',
+      '800_588_http://img.itc.cn/photo/jtEfeLgW6mt',
+      '510_510_http://img.itc.cn/photo/od0fLYfxHDE',
+      '930_620_http://img.itc.cn/photo/jMYDt1pmv31',
+      '450_678_http://img.itc.cn/photo/jCCbUO3gAPH',
+      '425_620_http://img.itc.cn/photo/jdD06LhezMD',
+      '830_566_http://img.itc.cn/photo/jAmoDIzv6uf',
+      '434_650_http://img.itc.cn/photo/jA6bxN8u1Vk',
+      '483_645_http://img.itc.cn/photo/jdDh3t5J4Lz',
+      '500_313_http://img.itc.cn/photo/oA6roagCsoA',
+      '500_750_http://img.itc.cn/photo/j50mVoxMj9j',
+      '641_978_http://img.itc.cn/photo/jk7KIFb8mgN',
+      '930_697_http://img.itc.cn/photo/jrHSHZrlYd8'
     ];
     list = list.concat(list.slice());
     var listdata = [];

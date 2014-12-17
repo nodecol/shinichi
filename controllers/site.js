@@ -12,7 +12,7 @@ exports.index = function (req, res, next) {
     if (err) {
       return next(err);
     }
-    res.render('index', { 
+    res.render('square/accordant', { 
       topics: items,
       pageTitle: tag && (tag + '版块')
     });

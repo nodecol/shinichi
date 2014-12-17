@@ -1,0 +1,14 @@
+<div class="square accordant">
+<% if(topics.length == 0) { %>
+  <div class="accordant">没有内容了</div>
+<% } else { topics.forEach(function (topic) { var imgdata = topic.desc;var index = imgdata.indexOf('_');var ww = imgdata.substring(0, index);imgdata = imgdata.substring(index+1);index = imgdata.indexOf('_');var hh = imgdata.substring(0, index);var url = imgdata.substring(index+1);%>
+  <div class="item">
+    <div class="item-cover">
+      <div class="item-description">
+        <p class="item-title"><%= topic.title%></p>
+      </div>
+    </div>
+    <img src="<%= url %>" alt="" style="width:<%= ww %>px;height:<%= hh %>px;"/>
+  </div>
+  <% })} %>
+</div>
