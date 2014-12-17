@@ -18,7 +18,7 @@ var app = express();
 // view engine setup
 app.set('views', require('path').join(__dirname, 'views'));
 app.set('view engine', 'html');
-app.engine('html', require('ejs-mate'));
+app.engine('html', require('./utils/ejs-mate'));
 app.locals._layoutFile = 'layout.html';
 
 app.use(require('serve-favicon')(__dirname + '/public/favicon.ico')); // favicon.icon

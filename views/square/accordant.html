@@ -1,3 +1,5 @@
+<% layout('layout') -%>
+<% block('head').append('<link href="/css/square/main.css" rel="stylesheet">') %>
 <div class="square accordant">
 <% if(topics.length == 0) { %>
   <div class="accordant">没有内容了</div>
@@ -12,3 +14,4 @@
   </div>
   <% })} %>
 </div>
+<% block('footer').append('<script src="/js/square/main.js"></script>') %>
