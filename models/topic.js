@@ -20,8 +20,8 @@ exports.getTopicsByPageAndTag = function (page, tag, callback) {
   }
 
   var query = {};
-  if (tag && tag!=='') {
-    query.tag = tag;
+  if (tag && tag !== '') {
+    query.tags.tag = tag;
   }
   var limit = config.list_topic_count;
   var options = { skip: (page - 1) * limit, limit: limit, sort: '-create_time' };
@@ -133,17 +133,17 @@ exports.delTopicsByAuthorId = function (authorId, callback) {
  * @param {String} title 标题
  * @param {String} desc 描述
  * @param {String} content 内容
- * @param {String} tag 标签
+ * @param {Array} tags 标签 exp: [{ "tag": "mei", "name": "美图" }]
  * @param {String} quoteUrl 引用地址
  * @param {String} authorId 创建者id
  * @param {Function} callback 回调函数
  */
-exports.createTopic = function (title, desc, content, tag, quoteUrl, authorId, callback) {
+exports.createTopic = function (title, desc, content, tags, quoteUrl, authorId, callback) {
   var topic = new Topic();
   topic.title = title;
   topic.desc = desc;
   topic.content = content;
-  topic.tag = tag;
+  topic.tags = tags;
   topic.quote_url = quoteUrl;
   topic.author_id = authorId;
   topic.save(callback);

@@ -27,7 +27,7 @@ var TopicSchema = new Schema({
   title: { type: String },
   desc: { type: String },
   content: { type: String },
-  tag: {type: [String]},
+  tags: {type: [{}]},
   author_id: { type: ObjectId },
   is_html: { type: Boolean },
   quote_url: { type: String}, // 引用地址
@@ -104,7 +104,11 @@ if (require.main === module) {
       temp.desc = list[i];
       temp.content = "";
       temp.author_id = authorId;
-      temp.tag = ["meiguo"];
+      if (i % 2 ===0) {
+        temp.tags = [{ "tag": "mei", "name": "美图" }];
+      } else {
+        temp.tags = [{ "tag": "xiao", "name": "搞笑" }];
+      }
       listdata.push(temp);
     }
     exports.Topic.create(listdata, function (err) {

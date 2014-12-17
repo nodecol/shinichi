@@ -187,7 +187,8 @@
         }
       })();
       $(document).ready(function() {
-          $("img.lazy").unveil(), $.scrollUp({
+          $("img.lazy").unveil();
+          $.scrollUp({
               scrollName: "scrollUp",
               topDistance: "300",
               topSpeed: 300,
@@ -195,21 +196,28 @@
               animationInSpeed: 200,
               animationOutSpeed: 200,
               scrollText: '<i class="fa fa-angle-up"></i>',
-              activeOverlay: !1
-          }), $("#toc").toc({
+              activeOverlay: false
+          });
+          $("#toc").toc({
               listType: '<ul class="nav"></ul>',
               selectors: "h2",
               container: ".post-content",
-              smoothScrolling: !0,
+              smoothScrolling: true,
               prefix: "toc",
-              onHighlight: function() {},
-              highlightOnScroll: !0,
+              onHighlight: function () {},
+              highlightOnScroll: true,
               highlightOffset: 100,
-              anchorName: function(a, b, c) {
+              anchorName: function (a, b, c) {
                   return c + a
               }
-          })
+          });
       });
+
+      var container = document.querySelector('#posts');
+var msnry = new Masonry( container, {
+  // options...
+  itemSelector: '.thumbnail'
+});
 
       
     </script>
