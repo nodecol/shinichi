@@ -135,8 +135,8 @@
       var rowSonsLen = new Array();
       while(i < itemsLen){
         var rowDiv = $("<div></div>");
-        rowDiv.attr("class","row");
-        rowDiv.width(bWidth-border*2);
+        rowDiv.attr("class","accordant-row");
+        rowDiv.width(bWidth);
         rowSonsLen[j] = 0;
         for(i ; i < itemsLen ;i ++){
           rowWidth += widthAry[i]+2*border;
@@ -226,7 +226,7 @@
         }
       });
 
-      $container.css("padding","0 "+border+"px");
+      //$container.css("padding","0 "+border+"px");
       $container.append(rowDivs);
 
       //有如下情况则舍弃一行
@@ -248,43 +248,11 @@
 
       //判断相片描述和相片时间是否拦截和隐藏，规则：相片宽度-两边padding-操作占宽=剩余宽度>80则拦截,小于则隐藏
       var $lastItems = $container.find(".item");
-      var tmpItemWidth = 0;
-      var tmpTitle;
-      var tmpTime;
-      //一边留白
       var padding = 15;
       $.each($lastItems,function(key,val){
         tmpItemWidth = $(this).width();
-        tmpDescript = $(this).find(".item-description");
-        tmpOptWidth = $(this).find(".item-opt").width()+2*padding;
-        if(tmpItemWidth<tmpOptWidth){
-          //如果图片宽度于小操作宽度先不考虑          
-        }
-        else if(tmpItemWidth-tmpOptWidth<80){
-          tmpDescript.addClass("hide"); 
-        }
-        else{
-          tmpDescript.removeClass("hide");  
-          tmpDescript.css("width",tmpItemWidth-tmpOptWidth);
-        }
-      });
-
-      //为点赞和评论添加监听器
-      var $likeBtns = $(".praise-btn");
-      $.each($likeBtns,function(key,val){
-        $(this).toggle(function(){
-          $(this).addClass("praise-btn-active");
-        },function(){
-          $(this).removeClass("praise-btn-active");
-        });
-      });
-      var $commentBtns = $(".comment-btn");
-      $.each($commentBtns,function(key,val){
-        $(this).toggle(function(){
-          $(this).addClass("comment-btn-active");
-        },function(){
-          $(this).removeClass("comment-btn-active");
-        });
+        $(this).find(".item-description").css("width",tmpItemWidth-padding*2);
+        $(this).find('img').css("display", "inline-block");
       });
     }
   }

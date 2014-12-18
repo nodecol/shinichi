@@ -167,6 +167,7 @@
     <script src="http://cdn.bootcss.com/toc/0.3.2/toc.min.js"></script>
     <script src="http://cdn.bootcss.com/masonry/3.1.5/masonry.pkgd.min.js"></script>
     <script src="http://cdn.bootcss.com/jquery.imagesloaded/3.0.4/jquery.imagesloaded.min.js"></script>
+    <script src="http://cdn.bootcss.com/jquery_lazyload/1.9.3/jquery.lazyload.min.js"></script>
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script type="text/javascript">
@@ -182,6 +183,7 @@
           document.querySelector('head').appendChild(msViewportStyle)
         }
       })();
+      $("img").lazyload();
     </script>
     <%- block('footer').toString() %>
   </body>
