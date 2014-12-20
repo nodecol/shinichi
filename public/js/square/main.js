@@ -4,10 +4,15 @@
     doPhotoLayout();
   });
   $(window).resize(function() {
-      doPhotoLayout();
-  }); 
+    doPhotoLayout();
+  });
+
+  
+  function getContainer(){
+    return $('.square');
+  }
   function getContainerWidth(){
-    return $('.square').width()||"";
+    return $container.width()||"";
   }
   //判断浏览器宽度范围，相当于media-query
   function getStandardHeight(){
@@ -15,103 +20,82 @@
     var bWidth = getContainerWidth();
     if(bWidth <= 360){
       sHeight = 100;
-    }
-    else if(bWidth <= 400){
+    }else if(bWidth <= 400){
       sHeight = 140;
-    }
-    else if(bWidth <= 480){
+    }else if(bWidth <= 480){
       sHeight = 150;
-    }
-    else if(bWidth <= 550){
+    }else if(bWidth <= 550){
       sHeight = 160;
-    }
-    else if(bWidth <= 640){
+    }else if(bWidth <= 640){
       sHeight = 170;
-    }
-    else if(bWidth <= 740){
+    }else if(bWidth <= 740){
       sHeight = 180;
-    }
-    else if(bWidth <= 800){
+    }else if(bWidth <= 800){
       sHeight = 190;
-    }
-    else if(bWidth <= 960){
+    }else if(bWidth <= 960){
       sHeight = 210;
-    }
-    else if(bWidth <= 1500){
+    }else if(bWidth <= 1500){
       sHeight = 230;
-    }
-    else if(bWidth <= 1920){
+    }else if(bWidth <= 1920){
       sHeight = 250;
-    }
-    else if(bWidth <= 2200){
+    }else if(bWidth <= 2200){
       sHeight = 270;
-    }
-    else if(bWidth <= 2400){
+    }else if(bWidth <= 2400){
       sHeight = 280;
-    }
-    else if(bWidth <= 2880){
+    }else if(bWidth <= 2880){
       sHeight = 300;    
-    }
-    else if(bWidth <= 3280){
+    }else if(bWidth <= 3280){
       sHeight = 320;
-    }
-    else{
+    }else{
       sHeight = 340;
     }
     return sHeight;
   }
-  //获取容器对象
-  function getContainer(){
-    var $container = $(".square");
-    return $container;
-  }
+  var $container = getContainer();
   var $imgItems;
-  var index = 1;
-  //得到所有imgItem单元
   function getItems(){
     if(typeof($imgItems)=="undefined"){
-      var $container = getContainer();
       $imgItems = $container.find(".item");
     }
     return $imgItems;
   }
-  //保存图片初始宽高
-  var widths;
-  var heights;
-  function getWidths(){
-    if(typeof(widths)=="undefined"){
+
+  var ol_width_list;
+  var ol_height_list;
+  function get_ol_width_list(){
+    if(typeof(ol_width_list)=="undefined"){
       var $items = getItems();
-      widths = new Array();
+      ol_width_list = new Array();
       $.each($items,function(key,val){
         var $imgs = $(this).find("img");
-        widths[key] = $imgs.width();
+        ol_width_list[key] = $imgs.width();
       });
     }
-    var tmpWidths = widths.slice();//不污染原数组
-    return tmpWidths;
+    var tmp_list = ol_width_list.slice();//不污染原数组
+    return tmp_list;
   }
-  function getHeights(){
-    if(typeof(heights)=="undefined"){
+  function get_ol_height_list(){
+    if(typeof(ol_height_list)=="undefined"){
       var $items = getItems();
-      heights = new Array();
+      ol_height_list = new Array();
       $.each($items,function(key,val){
         var $imgs = $(this).find("img");
-        heights[key] = $imgs.height();
+        ol_height_list[key] = $imgs.height();
       });
     }
-    var tmpHeights = heights.slice();//不污染原数组
-    return tmpHeights;
+    var tmp_list = ol_height_list.slice();//不污染原数组
+    return tmp_list;
   }
   //调整主函数
   function doPhotoLayout(){
+    var border = 10;//边框值
     var sHeight = getStandardHeight();
-    var bWidth = getContainerWidth();
+    var rWidth = getContainerWidth() + 2*border;
     var $container = getContainer();
     var $items = getItems();
-    var widthAry = getWidths()
-    var heightAry = getHeights();
+    var widthAry = get_ol_width_list()
+    var heightAry = get_ol_height_list();
     var itemsLen = $items.length||0;
-    var border = 10;//边框值
 
     if(itemsLen==0){
       var $para = $("<p>不好意思，你还没有上传图片哦，赶快上传试试吧！</p>");
@@ -128,7 +112,7 @@
       }
 
       //创建每行父容器，并寻找各自子节点
-      $(".row").remove();//清楚旧容器
+      $(".accordant－row").remove();//清楚旧容器
       var rowWidth = 2*border;//记录每行宽度，初始为容器左右padding宽
       var i = 0,j = 0;
       var rowDivs = new Array();
@@ -136,59 +120,59 @@
       while(i < itemsLen){
         var rowDiv = $("<div></div>");
         rowDiv.attr("class","accordant-row");
-        rowDiv.width(bWidth);
+        rowDiv.css({ 'position': 'relative', 'width': rWidth, 'left': "-10px"})
         rowSonsLen[j] = 0;
         for(i ; i < itemsLen ;i ++){
           rowWidth += widthAry[i]+2*border;
           rowDiv.append($items[i]);
           rowSonsLen[j] += 1;
           //装不下下一个图片则保存该行，然后继续下一行
-            if(i+1<itemsLen&&(rowWidth+widthAry[i+1]+2*border)>bWidth){
+          if(i+1<itemsLen&&(rowWidth+widthAry[i+1]+2*border)>rWidth){
             rowDivs[j++] = rowDiv;
             rowWidth = 2*border;
             i++;
-              break;
+            break;
           }
           else if(i+1==itemsLen){
             rowDivs[j] = rowDiv;
           }
         }
       }
-      var rowDivsLen = rowDivs.length;
-     //只有1行不做调整
-            if(rowDivsLen>1){
-                //计算调整后差距
-                var rowTotalWidth = 0;
-                var restAry = new Array();
-                var j = 0;//记录宽度数组下标
-                var maxLen = 0;
-                var containerWidth = 0;
-                for(var i = 0 ; i < rowDivsLen ; i++){
-                    var k = j;
-                    containerWidth = bWidth - 2 * border;
-                    rowTotalWidth = 0;
-                    maxLen += rowSonsLen[i];
-                    for(j ; j < maxLen ; j++){
-                        rowTotalWidth += widthAry[j];
-                        containerWidth -= 2 * border;
-                    }
-                    //比例=目标宽度/实际宽度=目标高度/实际高度
-                    //var rate = parseFloat(containerWidth/rowTotalWidth);
-                    var afterHeight = Math.round(parseFloat(sHeight*containerWidth/rowTotalWidth));
-                    heightAry[i] = afterHeight;
-                    restAry[i] = 2*border;
-                    //算出高度列表后再更新宽度列表
-                    for(k ; k < maxLen ; k++){
-                        widthAry[k] = Math.round(parseFloat(widthAry[k]*afterHeight/sHeight));
-                        restAry[i] += widthAry[k]+2*border;//调整后宽度
-                    }
-                }
 
+      var rowDivsLen = rowDivs.length;
+      //只有1行不做调整
+      if(rowDivsLen>1){
+        //计算调整后差距
+        var rowTotalWidth = 0;
+        var restAry = new Array();
+        var j = 0;//记录宽度数组下标
+        var maxLen = 0;
+        var containerWidth = 0;
+        for(var i = 0 ; i < rowDivsLen ; i++){
+          var k = j;
+          containerWidth = rWidth;
+          rowTotalWidth = 0;
+          maxLen += rowSonsLen[i];
+          for(j ; j < maxLen ; j++){
+            rowTotalWidth += widthAry[j];
+            containerWidth -= 2 * border;
+          }
+          //比例=目标宽度/实际宽度=目标高度/实际高度
+          //var rate = parseFloat(containerWidth/rowTotalWidth);
+          var afterHeight = Math.round(parseFloat(sHeight*containerWidth/rowTotalWidth));
+          heightAry[i] = afterHeight;
+          restAry[i] = 0;
+          //算出高度列表后再更新宽度列表
+          for(k ; k < maxLen ; k++){
+            widthAry[k] = Math.round(parseFloat(widthAry[k]*afterHeight/sHeight));
+            restAry[i] += widthAry[k]+2*border;//调整后宽度
+          }
+        }
         //调整最后间距
         var gap = 0;//间距值
         var acIndex = 0;
         for (var i = 0; i < rowDivsLen; i++) {
-          gap = bWidth - restAry[i];
+          gap = rWidth - restAry[i];
           //小于容器宽度
           if(gap > 0){
             while(gap!=0){
@@ -216,7 +200,7 @@
       $.each($items,function(key,val){
         $(this).css({"width":widthAry[key],"height":heightAry[i],"margin":border});
         var $img = $(this).find("img");
-        $img.css({"width":widthAry[key],"height":heightAry[i]});
+        $img.css({"width":widthAry[key],"height":heightAry[i],"display":"inline-block"});
         if(j<rowSonsLen[i]-1){
           j++;
         }
@@ -237,11 +221,11 @@
       var rate=1;
       var heightRaw=0,heightNow=0,widthRaw=0,widthNow=0;
       $.each($lastImgs,function(key,val){
-        heightRaw = parseFloat(heights[key]/widths[key]);
+        heightRaw = parseFloat(ol_height_list[key]/ol_width_list[key]);
         heightNow = parseFloat($(this).height()/$(this).width());
-        widthRaw = parseFloat(widths[key]/heights[key]);
+        widthRaw = parseFloat(ol_width_list[key]/ol_height_list[key]);
         widthNow = parseFloat($(this).width()/$(this).height());
-        if(Math.abs(heightRaw - heightNow)>rate||Math.abs(widthRaw - widthNow)>rate||heights[key]*1.5<$(this).height()||widths[key]*1.5<$(this).width()){
+        if(Math.abs(heightRaw - heightNow)>rate||Math.abs(widthRaw - widthNow)>rate||ol_height_list[key]*1.5<$(this).height()||ol_width_list[key]*1.5<$(this).width()){
           $(this).parents(".row").css("display","none");
         }
       });
@@ -252,7 +236,6 @@
       $.each($lastItems,function(key,val){
         tmpItemWidth = $(this).width();
         $(this).find(".item-description").css("width",tmpItemWidth-padding*2);
-        $(this).find('img').css("display", "inline-block");
       });
     }
   }
