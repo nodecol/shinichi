@@ -5,6 +5,7 @@ var topic = require('./topic');
 router.get('/', site.index);
 router.get('/sitemap.xml', site.sitemap);
 
-router.get('/topic/:tid', topic.index);
+router.get('/topics', topic.getTopics);
+router.get('/topic/:tid', topic.getTopic);
 
 module.exports = router;

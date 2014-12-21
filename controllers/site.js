@@ -2,21 +2,7 @@ var Topic = require('../models/topic');
 var xmlbuilder = require('xmlbuilder');
 
 exports.index = function (req, res, next) {
-  var page = parseInt(req.query.page, 10) || 1;
-  page = page > 0 ? page : 1;
-  var tag = req.query.tag || req.session.tag || '';
-
-  req.session.tag = tag;
-
-  Topic.getTopicsByPageAndTag(page, tag, function (err, items) {
-    if (err) {
-      return next(err);
-    }
-    res.render('square/accordant', { 
-      topics: items,
-      pageTitle: tag && (tag + '版块')
-    });
-  });
+  res.render('square/main');
 };
 
 exports.sitemap = function (req, res, next) {

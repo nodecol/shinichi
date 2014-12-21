@@ -1,93 +1,174 @@
 
 (function(){
+  var cur_page = 1;
+  var cur_tag = '';
+  var loading_page = false;
+  var no_page = false;
+  function loadItems(page, tag) {
+    if (no_page) return;
+    loading_page = true;
+    $square = $('.square');
+    $loading = $('#loading');
+    $loading.css({'visibility': 'visible'});
+    $.getJSON("/topics?page=" + page + "&tag=" + tag).done(function (items) {
+      // 等高布局
+      $square.addClass('accordant');
+      if(!items || items.length == 0) {
+        no_page = true;
+        loading_page = false;
+        $loading.css({'visibility': 'hidden'});
+
+        var $tips = $('<div class="accordant" style="text-align:center;">没有内容了</div>');
+        $square.append($tips);
+      } else {
+        var itemLength = items.length;
+        for (var i = 0; i < itemLength; i++) {
+          var imgdata = items[i].desc;
+          var index = imgdata.indexOf('_');
+          var ww = imgdata.substring(0, index);
+          imgdata = imgdata.substring(index+1);
+          index = imgdata.indexOf('_');
+          var hh = imgdata.substring(0, index);
+          var url = imgdata.substring(index+1);
+
+          var $item = $('<div class="item"></div>');
+          $item.append('<div class="item-cover"><div class="item-description"><p class="item-title">' + items[i].title + '</p></div></div>')
+          $item.append('<img src="' + url + '" alt="" style="width:' + ww + 'px;height:' + hh + 'px;display:none;"/>')
+
+          $square.append($item);
+        };
+        executeAccordantLayout();
+        if (cur_page === 1) {
+          $(window).resize(function () {
+            executeAccordantLayout();
+          });
+          $(window).scroll(scrollHandler);
+        }
+
+        loading_page = false;
+        $loading.css({'visibility': 'hidden'});
+      }
+    });
+  }
+
+  function get_scroll_top () {
+    var scrollTop = 0;
+    if(document.documentElement && document.documentElement.scrollTop) {
+      scrollTop = document.documentElement.scrollTop;
+    } else if(document.body) {
+      scrollTop = document.body.scrollTop;
+    }
+    return scrollTop;
+  }
+  function get_client_height () {
+    var clientHeight = 0;
+    if(document.body.clientHeight && document.documentElement.clientHeight) {
+      var clientHeight = (document.body.clientHeight < document.documentElement.clientHeight) ? document.body.clientHeight : document.documentElement.clientHeight;        
+    } else {
+      var clientHeight = (document.body.clientHeight > document.documentElement.clientHeight) ? document.body.clientHeight : document.documentElement.clientHeight;    
+    }
+    return clientHeight;
+  }
+  function get_scroll_height () {
+    return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+  }
+  function get_client_width () {
+    return document.documentElement.clientWidth;
+  }
+  function scrollHandler () {
+    if(get_scroll_height() - get_client_height() - 10 <= get_scroll_top()) {
+      if (loading_page) return false;
+      cur_page ++;
+      loadItems(cur_page, cur_tag);
+    }
+  }
+
   $(function(){
-    doPhotoLayout();
-  });
-  $(window).resize(function() {
-    doPhotoLayout();
+    loadItems(cur_page, cur_tag);
   });
 
-  
-  function getContainer(){
-    return $('.square');
-  }
-  function getContainerWidth(){
-    return $container.width()||"";
-  }
-  //判断浏览器宽度范围，相当于media-query
-  function getStandardHeight(){
-    var sHeight = 0;
-    var bWidth = getContainerWidth();
-    if(bWidth <= 360){
-      sHeight = 100;
-    }else if(bWidth <= 400){
-      sHeight = 140;
-    }else if(bWidth <= 480){
-      sHeight = 150;
-    }else if(bWidth <= 550){
-      sHeight = 160;
-    }else if(bWidth <= 640){
-      sHeight = 170;
-    }else if(bWidth <= 740){
-      sHeight = 180;
-    }else if(bWidth <= 800){
-      sHeight = 190;
-    }else if(bWidth <= 960){
-      sHeight = 210;
-    }else if(bWidth <= 1500){
-      sHeight = 230;
-    }else if(bWidth <= 1920){
-      sHeight = 250;
-    }else if(bWidth <= 2200){
-      sHeight = 270;
-    }else if(bWidth <= 2400){
-      sHeight = 280;
-    }else if(bWidth <= 2880){
-      sHeight = 300;    
-    }else if(bWidth <= 3280){
-      sHeight = 320;
-    }else{
-      sHeight = 340;
-    }
-    return sHeight;
-  }
-  var $container = getContainer();
-  var $imgItems;
-  function getItems(){
-    if(typeof($imgItems)=="undefined"){
-      $imgItems = $container.find(".item");
-    }
-    return $imgItems;
-  }
-
-  var ol_width_list;
-  var ol_height_list;
-  function get_ol_width_list(){
-    if(typeof(ol_width_list)=="undefined"){
-      var $items = getItems();
-      ol_width_list = new Array();
-      $.each($items,function(key,val){
-        var $imgs = $(this).find("img");
-        ol_width_list[key] = $imgs.width();
-      });
-    }
-    var tmp_list = ol_width_list.slice();//不污染原数组
-    return tmp_list;
-  }
-  function get_ol_height_list(){
-    if(typeof(ol_height_list)=="undefined"){
-      var $items = getItems();
-      ol_height_list = new Array();
-      $.each($items,function(key,val){
-        var $imgs = $(this).find("img");
-        ol_height_list[key] = $imgs.height();
-      });
-    }
-    var tmp_list = ol_height_list.slice();//不污染原数组
-    return tmp_list;
-  }
   //调整主函数
-  function doPhotoLayout(){
+  function executeAccordantLayout(){
+    function getContainer(){
+      return $('.square');
+    }
+    function getContainerWidth(){
+      return $container.width()||"";
+    }
+    //判断浏览器宽度范围，相当于media-query
+    function getStandardHeight(){
+      var sHeight = 0;
+      var bWidth = getContainerWidth();
+      if(bWidth <= 360){
+        sHeight = 100;
+      }else if(bWidth <= 400){
+        sHeight = 140;
+      }else if(bWidth <= 480){
+        sHeight = 150;
+      }else if(bWidth <= 550){
+        sHeight = 160;
+      }else if(bWidth <= 640){
+        sHeight = 170;
+      }else if(bWidth <= 740){
+        sHeight = 180;
+      }else if(bWidth <= 800){
+        sHeight = 190;
+      }else if(bWidth <= 960){
+        sHeight = 210;
+      }else if(bWidth <= 1500){
+        sHeight = 230;
+      }else if(bWidth <= 1920){
+        sHeight = 250;
+      }else if(bWidth <= 2200){
+        sHeight = 270;
+      }else if(bWidth <= 2400){
+        sHeight = 280;
+      }else if(bWidth <= 2880){
+        sHeight = 300;    
+      }else if(bWidth <= 3280){
+        sHeight = 320;
+      }else{
+        sHeight = 340;
+      }
+      return sHeight;
+    }
+    var $container = getContainer();
+    var $imgItems;
+    function getItems(){
+      if(typeof($imgItems)=="undefined"){
+        $imgItems = $container.find(".item");
+      }
+      return $imgItems;
+    }
+
+    var ol_width_list;
+    var ol_height_list;
+    function get_ol_width_list(){
+      if(typeof(ol_width_list)=="undefined"){
+        var $items = getItems();
+        ol_width_list = new Array();
+        $.each($items,function(key,val){
+          var $imgs = $(this).find("img");
+          ol_width_list[key] = $imgs.width();
+        });
+      }
+      var tmp_list = ol_width_list.slice();//不污染原数组
+      return tmp_list;
+    }
+    function get_ol_height_list(){
+      if(typeof(ol_height_list)=="undefined"){
+        var $items = getItems();
+        ol_height_list = new Array();
+        $.each($items,function(key,val){
+          var $imgs = $(this).find("img");
+          ol_height_list[key] = $imgs.height();
+        });
+      }
+      var tmp_list = ol_height_list.slice();//不污染原数组
+      return tmp_list;
+    }
+
+
     var border = 10;//边框值
     var sHeight = getStandardHeight();
     var rWidth = getContainerWidth() + 2*border;
