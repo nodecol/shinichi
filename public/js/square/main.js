@@ -46,7 +46,7 @@
       } else {
         // 等宽布局
         $square.addClass('aequilate');
-        //$square.css('position', 'relative');
+        $square.css('position', 'relative');
         for (var i = 0; i < items.length; i++) {
           var imgdata = items[i].desc;
           var index = imgdata.indexOf('_');
@@ -131,6 +131,8 @@
 
   // 等宽布局
   function executeAequilateLayout () {
+    var STANDARD_WIDTH = 283;
+    var STANDARD_GAP = 20;
     function getContainer () {
       return $('.square');
     };
@@ -138,13 +140,18 @@
     function getContainerWidth () {
       return $container.width()||"";
     };
-    var columns = Math.floor((getContainerWidth() + 20) / 303);
+    // 获取标准列数
+    var columns = Math.floor((getContainerWidth() + STANDARD_GAP) / (STANDARD_WIDTH + STANDARD_GAP));
+    if (columns < 1) columns = 1;
     var colume_item_arr = [];
     var colume_height_arr = [];
     for (var i = 0; i < columns; i++) {
       colume_item_arr.push(new Array());
       colume_height_arr.push(0);
     };
+    // 根据列数自适应宽度
+    var www = (getContainerWidth() - (columns - 1) * STANDARD_GAP) / columns;
+    if (www < STANDARD_WIDTH) www = STANDARD_WIDTH;
 
     var $iitems;
     function getItems () {
@@ -154,20 +161,32 @@
       return $iitems;
     }
 
-    function getIndexWithShorter () {
-      console.log('colume_height_arr',colume_height_arr)
+    function getShorterIndexInColumes () {
       return colume_height_arr.indexOf(Math.min.apply(Math, colume_height_arr));
+    }
+
+    function getTallInColumes () {
+      return Math.max.apply(Math, colume_height_arr);
     }
 
     var $items = getItems();
     $.each($items, function (key, value) {
-      var index  = getIndexWithShorter();
+      var index  = getShorterIndexInColumes();
       var lastTopInIndexColume = colume_item_arr[index].length > 0 ? colume_height_arr[index] : 0;
-      
-      $(this).css({'position': 'absolute', 'top': lastTopInIndexColume, 'left': index * (283 + 20)});
+      // 若宽度大于标准的宽度，则需要调整图片的宽高
+      if (www > STANDARD_WIDTH) {
+        var $img = $(this).find('img');
+        var $img_w = $img.width();
+        var $img_h = $img.height();
+        $img.css({'width': www, 'height': $img_h * www / $img_w});
+      }
+
+      $(this).css({'position': 'absolute', 'top': lastTopInIndexColume, 'left': index * (www + STANDARD_GAP)});
       colume_item_arr[index].push($(this));
-      colume_height_arr[index] += $(this).height() + 20;
+      colume_height_arr[index] += $(this).height() + STANDARD_GAP;
     });
+
+    getContainer().css('height', getTallInColumes());
   }
 
   // 等高布局
