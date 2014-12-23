@@ -4,6 +4,7 @@
   var cur_tag = '';
   var loading_page = false;
   var no_page = false;
+  var is_accordant_layout = false;
   function loadItems(page, tag) {
     if (no_page) return;
     loading_page = true;
@@ -11,18 +12,42 @@
     $loading = $('#loading');
     $loading.css({'visibility': 'visible'});
     $.getJSON("/topics?page=" + page + "&tag=" + tag).done(function (items) {
-      // 等高布局
-      $square.addClass('accordant');
-      if(!items || items.length == 0) {
-        no_page = true;
-        loading_page = false;
-        $loading.css({'visibility': 'hidden'});
+      if (is_accordant_layout) {
+        // 等高布局
+        $square.addClass('accordant');
+        if(!items || items.length == 0) {
+          no_page = true;
+          loading_page = false;
+          $loading.css({'visibility': 'hidden'});
 
-        var $tips = $('<div class="accordant" style="text-align:center;">没有内容了</div>');
-        $square.append($tips);
+          var $tips = $('<div class="accordant" style="text-align:center;">没有内容了</div>');
+          $square.append($tips);
+        } else {
+          var itemLength = items.length;
+          for (var i = 0; i < itemLength; i++) {
+            var imgdata = items[i].desc;
+            var index = imgdata.indexOf('_');
+            var ww = imgdata.substring(0, index);
+            imgdata = imgdata.substring(index+1);
+            index = imgdata.indexOf('_');
+            var hh = imgdata.substring(0, index);
+            var url = imgdata.substring(index+1);
+
+            var $item = $('<div class="item"></div>');
+            $item.append('<div class="item-cover"><div class="item-description"><p class="item-title">' + items[i].title + '</p></div></div>')
+            if (page === 1) {
+              $item.append('<img class="img" src="'+ url + '" style="width:' + ww + 'px;height:' + hh + 'px;display:none;"/>')
+            } else {
+              $item.append('<img class="img lazy" src="/img/sprite.gif" data-src="'+ url + '" style="width:' + ww + 'px;height:' + hh + 'px;display:none;"/>')
+            }
+            $square.append($item);
+          }
+        }
       } else {
-        var itemLength = items.length;
-        for (var i = 0; i < itemLength; i++) {
+        // 等宽布局
+        $square.addClass('aequilate');
+        //$square.css('position', 'relative');
+        for (var i = 0; i < items.length; i++) {
           var imgdata = items[i].desc;
           var index = imgdata.indexOf('_');
           var ww = imgdata.substring(0, index);
@@ -32,23 +57,20 @@
           var url = imgdata.substring(index+1);
 
           var $item = $('<div class="item"></div>');
-          $item.append('<div class="item-cover"><div class="item-description"><p class="item-title">' + items[i].title + '</p></div></div>')
-          if (page === 1) {
-            $item.append('<img class="img" src="'+ url + '" style="width:' + ww + 'px;height:' + hh + 'px;display:none;"/>')
-          } else {
-            $item.append('<img class="img lazy" src="/img/sprite.gif" data-src="'+ url + '" style="width:' + ww + 'px;height:' + hh + 'px;display:none;"/>')
-          }
+          $item.append('<div class="item-wrap"><img class="img lazy" src="/img/sprite.gif" data-src="' + url + '" style="width: 283px; height: ' + 283*hh/ww + 'px; display: inline;" data-width="' + ww + '" + data-height="' + hh + '"></div>');
           $square.append($item);
         };
-
-        $("img.lazy").lazyload({
-          data_attribute : "src",
-          placeholder : "/img/sprite.gif",
-          threshold : 200,
-          effect : "fadeIn",
-          load : function () { $(this).removeClass('lazy') }
-        });
-        
+      }
+      
+      $("img.lazy").lazyload({
+        data_attribute : "src",
+        placeholder : "/img/sprite.gif",
+        threshold : 200,
+        effect : "fadeIn",
+        load : function () { $(this).removeClass('lazy') }
+      });
+      
+      if (is_accordant_layout) {
         executeAccordantLayout();
         if (cur_page === 1) {
           $(window).resize(function () {
@@ -56,10 +78,18 @@
           });
           $(window).scroll(scrollHandler);
         }
-
-        loading_page = false;
-        $loading.css({'visibility': 'hidden'});
+      } else {
+        executeAequilateLayout();
+        if (cur_page === 1) {
+          $(window).resize(function () {
+            executeAequilateLayout();
+          });
+          $(window).scroll(scrollHandler);
+        }
       }
+
+      loading_page = false;
+      $loading.css({'visibility': 'hidden'});
     });
   }
 
@@ -95,15 +125,57 @@
     }
   }
 
-  $(function(){
+  $(function () {
     loadItems(cur_page, cur_tag);
   });
 
-  //调整主函数
+  // 等宽布局
+  function executeAequilateLayout () {
+    function getContainer () {
+      return $('.square');
+    };
+    var $container = getContainer();
+    function getContainerWidth () {
+      return $container.width()||"";
+    };
+    var columns = Math.floor((getContainerWidth() + 20) / 303);
+    var colume_item_arr = [];
+    var colume_height_arr = [];
+    for (var i = 0; i < columns; i++) {
+      colume_item_arr.push(new Array());
+      colume_height_arr.push(0);
+    };
+
+    var $iitems;
+    function getItems () {
+      if(typeof($iitems)=="undefined"){
+        $iitems = $container.find(".item");
+      }
+      return $iitems;
+    }
+
+    function getIndexWithShorter () {
+      console.log('colume_height_arr',colume_height_arr)
+      return colume_height_arr.indexOf(Math.min.apply(Math, colume_height_arr));
+    }
+
+    var $items = getItems();
+    $.each($items, function (key, value) {
+      var index  = getIndexWithShorter();
+      var lastTopInIndexColume = colume_item_arr[index].length > 0 ? colume_height_arr[index] : 0;
+      
+      $(this).css({'position': 'absolute', 'top': lastTopInIndexColume, 'left': index * (283 + 20)});
+      colume_item_arr[index].push($(this));
+      colume_height_arr[index] += $(this).height() + 20;
+    });
+  }
+
+  // 等高布局
   function executeAccordantLayout(){
     function getContainer(){
       return $('.square');
     }
+    var $container = getContainer();
     function getContainerWidth(){
       return $container.width()||"";
     }
@@ -144,13 +216,12 @@
       }
       return sHeight;
     }
-    var $container = getContainer();
-    var $imgItems;
+    var $iitems;
     function getItems(){
-      if(typeof($imgItems)=="undefined"){
-        $imgItems = $container.find(".item");
+      if(typeof($iitems)=="undefined"){
+        $iitems = $container.find(".item");
       }
-      return $imgItems;
+      return $iitems;
     }
 
     var ol_width_list;
