@@ -33,10 +33,22 @@
 
           var $item = $('<div class="item"></div>');
           $item.append('<div class="item-cover"><div class="item-description"><p class="item-title">' + items[i].title + '</p></div></div>')
-          $item.append('<img src="' + url + '" alt="" style="width:' + ww + 'px;height:' + hh + 'px;display:none;"/>')
-
+          if (page === 1) {
+            $item.append('<img class="img" src="'+ url + '" style="width:' + ww + 'px;height:' + hh + 'px;display:none;"/>')
+          } else {
+            $item.append('<img class="img lazy" src="/img/sprite.gif" data-src="'+ url + '" style="width:' + ww + 'px;height:' + hh + 'px;display:none;"/>')
+          }
           $square.append($item);
         };
+
+        $("img.lazy").lazyload({
+          data_attribute : "src",
+          placeholder : "/img/sprite.gif",
+          threshold : 200,
+          effect : "fadeIn",
+          load : function () { $(this).removeClass('lazy') }
+        });
+        
         executeAccordantLayout();
         if (cur_page === 1) {
           $(window).resize(function () {
@@ -193,7 +205,7 @@
       }
 
       //创建每行父容器，并寻找各自子节点
-      $(".accordant－row").remove();//清楚旧容器
+      $(".accordant-row").remove();//清楚旧容器
       var rowWidth = 2*border;//记录每行宽度，初始为容器左右padding宽
       var i = 0,j = 0;
       var rowDivs = new Array();
@@ -292,7 +304,7 @@
       });
 
       //$container.css("padding","0 "+border+"px");
-      $container.append(rowDivs);
+      $container.prepend(rowDivs);
 
       //有如下情况则舍弃一行
       //1）原始宽高比与转换后宽高比大于rate;
