@@ -18,10 +18,8 @@
         if(!items || items.length == 0) {
           no_page = true;
           loading_page = false;
-          $loading.css({'visibility': 'hidden'});
-
-          var $tips = $('<div class="accordant" style="text-align:center;">没有内容了</div>');
-          $square.append($tips);
+          $loading.css({'visibility': 'hidden', 'display':'none'});
+          $('#no_content').css('display', 'inline-block');
         } else {
           var itemLength = items.length;
           for (var i = 0; i < itemLength; i++) {
@@ -47,19 +45,30 @@
         // 等宽布局
         $square.addClass('aequilate');
         $square.css('position', 'relative');
-        for (var i = 0; i < items.length; i++) {
-          var imgdata = items[i].desc;
-          var index = imgdata.indexOf('_');
-          var ww = imgdata.substring(0, index);
-          imgdata = imgdata.substring(index+1);
-          index = imgdata.indexOf('_');
-          var hh = imgdata.substring(0, index);
-          var url = imgdata.substring(index+1);
+        if(!items || items.length == 0) {
+          no_page = true;
+          loading_page = false;
+          $loading.css({'visibility': 'hidden', 'display':'none'});
+          $('#no_content').css('display', 'inline-block');
+        } else {
+          for (var i = 0; i < items.length; i++) {
+            var imgdata = items[i].desc;
+            var index = imgdata.indexOf('_');
+            var ww = imgdata.substring(0, index);
+            imgdata = imgdata.substring(index+1);
+            index = imgdata.indexOf('_');
+            var hh = imgdata.substring(0, index);
+            var url = imgdata.substring(index+1);
 
-          var $item = $('<div class="item"></div>');
-          $item.append('<div class="item-wrap"><img class="img lazy" src="/img/sprite.gif" data-src="' + url + '" style="width: 283px; height: ' + 283*hh/ww + 'px; display: inline;" data-width="' + ww + '" + data-height="' + hh + '"></div>');
-          $square.append($item);
-        };
+            var $item = $('<div class="item"></div>');
+            if (page === 1) {
+              $item.append('<div class="item-wrap"><img class="img" src="' + url + '" style="width: 283px; height: ' + 283*hh/ww + 'px; display: inline;" data-width="' + ww + '" + data-height="' + hh + '"></div>');
+            } else {
+              $item.append('<div class="item-wrap"><img class="img lazy" src="/img/sprite.gif" data-src="' + url + '" style="width: 283px; height: ' + 283*hh/ww + 'px; display: inline;" data-width="' + ww + '" + data-height="' + hh + '"></div>');
+            }
+            $square.append($item);
+          }
+        }
       }
       
       $("img.lazy").lazyload({
@@ -153,12 +162,12 @@
     var www = (getContainerWidth() - (columns - 1) * STANDARD_GAP) / columns;
     if (www < STANDARD_WIDTH) www = STANDARD_WIDTH;
 
-    var $iitems;
+    var $ol_items;
     function getItems () {
-      if(typeof($iitems)=="undefined"){
-        $iitems = $container.find(".item");
+      if(typeof($ol_items)=="undefined"){
+        $ol_items = $container.find(".item");
       }
-      return $iitems;
+      return $ol_items;
     }
 
     function getShorterIndexInColumes () {
@@ -235,12 +244,12 @@
       }
       return sHeight;
     }
-    var $iitems;
+    var $ol_items;
     function getItems(){
-      if(typeof($iitems)=="undefined"){
-        $iitems = $container.find(".item");
+      if(typeof($ol_items)=="undefined"){
+        $ol_items = $container.find(".item");
       }
-      return $iitems;
+      return $ol_items;
     }
 
     var ol_width_list;
