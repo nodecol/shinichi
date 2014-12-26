@@ -38,7 +38,7 @@ exports.getTopicsByPageAndTag = function (page, tag, callback) {
     }
     // 从数据库中查数据
     //Topic.find(query, '_id title desc author_id', options, callback);
-    Topic.find(query, '_id title desc author_id', options, function (err, topics) {
+    Topic.find(query, '_id title imgs quote_author', options, function (err, topics) {
       //数据库出错
       if (err) {
         return callback(err);
@@ -131,17 +131,17 @@ exports.delTopicsByAuthorId = function (authorId, callback) {
  * Callback:
  * - err, 数据库异常
  * @param {String} title 标题
- * @param {String} desc 描述
+ * @param {String} imgs 图片标签
  * @param {String} content 内容
  * @param {Array} tags 标签 exp: [{ "tag": "mei", "name": "美图" }]
  * @param {String} quoteUrl 引用地址
  * @param {String} authorId 创建者id
  * @param {Function} callback 回调函数
  */
-exports.createTopic = function (title, desc, content, tags, quoteUrl, authorId, callback) {
+exports.createTopic = function (title, imgs, content, tags, quoteUrl, authorId, callback) {
   var topic = new Topic();
   topic.title = title;
-  topic.desc = desc;
+  topic.imgs = imgs;
   topic.content = content;
   topic.tags = tags;
   topic.quote_url = quoteUrl;

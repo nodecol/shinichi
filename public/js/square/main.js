@@ -52,6 +52,25 @@
           $('#no_content').css('display', 'inline-block');
         } else {
           for (var i = 0; i < items.length; i++) {
+            if (items[i].imgs.length < 1) {
+              continue;
+            } else {
+              var $item = $('<div class="item"></div>');
+              var $item_wrap = $('<div class="item-wrap"></div>');
+              console.log(items[i].imgs.length)
+              for (var m = 0; m < items[i].imgs.length; m++) {
+                $item_wrap.append(items[i].imgs[m]);
+              };
+
+              if (page === 1) {
+                $item.find('img').addClass('img');
+              } else {
+                $item.find('img').addClass('img lazy');
+              }
+              console.log($item_wrap);
+              $square.append($item_wrap);
+            }
+            /*
             var imgdata = items[i].desc;
             var index = imgdata.indexOf('_');
             var ww = imgdata.substring(0, index);
@@ -67,6 +86,7 @@
               $item.append('<div class="item-wrap"><img class="img lazy" src="/img/sprite.gif" data-src="' + url + '" style="width: 283px; height: ' + 283*hh/ww + 'px; display: inline;" data-width="' + ww + '" + data-height="' + hh + '"></div>');
             }
             $square.append($item);
+            */
           }
         }
       }
