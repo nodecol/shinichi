@@ -66,3 +66,14 @@ app.listen(config.port, function() {
 });
 
 module.exports = app;
+
+// https setting
+var https = require('https')
+  , fs = require("fs");
+var options = {
+  key: fs.readFileSync('cert/privatekey.pem'),
+  cert: fs.readFileSync('cert/certificate.pem')
+};
+https.createServer(options, app).listen(config.https_port, function () {
+  debug('Https server listening on port ' + config.https_port);
+});

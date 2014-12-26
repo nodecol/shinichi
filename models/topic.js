@@ -131,7 +131,7 @@ exports.delTopicsByAuthorId = function (authorId, callback) {
  * Callback:
  * - err, 数据库异常
  * @param {String} title 标题
- * @param {String} imgs 图片标签
+ * @param {Array} imgs 图片数据
  * @param {String} content 内容
  * @param {Array} tags 标签 exp: [{ "tag": "mei", "name": "美图" }]
  * @param {String} quoteUrl 引用地址

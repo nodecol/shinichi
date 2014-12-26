@@ -12,6 +12,11 @@
     $loading = $('#loading');
     $loading.css({'visibility': 'visible'});
     $.getJSON("/topics?page=" + page + "&tag=" + tag).done(function (items) {
+      // 过滤掉没有imgs的数据
+      items = $.grep(items, function (item) {
+        return item.imgs.length > 0;
+      });
+      // 开始布局
       if (is_accordant_layout) {
         // 等高布局
         $square.addClass('accordant');
@@ -21,18 +26,25 @@
           $loading.css({'visibility': 'hidden', 'display':'none'});
           $('#no_content').css('display', 'inline-block');
         } else {
-          var itemLength = items.length;
-          for (var i = 0; i < itemLength; i++) {
-            var imgdata = items[i].desc;
-            var index = imgdata.indexOf('_');
-            var ww = imgdata.substring(0, index);
-            imgdata = imgdata.substring(index+1);
-            index = imgdata.indexOf('_');
-            var hh = imgdata.substring(0, index);
-            var url = imgdata.substring(index+1);
+          // 处理数据
+          var copyitems = $.extend(true, [], items);
+          for (var i = 0; i < items.length; i++) {
+            if (items[i].imgs > 1) {
+              for (var m = 0; m < items[i].imgs.length; m++) {
+                var newobj = $.extend(true, {}, items[i]);
+                newobj.imgs = new Array(items[i].imgs[m]);
+                copyitems.splice(i + m + 1, 0, newobj);
+              }
+              copyitems.splice(i, 1);
+            }
+          }
 
+          for (var x = 0; x < copyitems.length; x++) {
+            var ww = copyitems[x].imgs[0].width;
+            var hh = copyitems[x].imgs[0].height;
+            var url = copyitems[x].imgs[0].url;
             var $item = $('<div class="item"></div>');
-            $item.append('<div class="item-cover"><div class="item-description"><p class="item-title">' + items[i].title + '</p></div></div>')
+            $item.append('<div class="item-cover"><div class="item-description"><p class="item-title">' + copyitems[x].title + '</p></div></div>')
             if (page === 1) {
               $item.append('<img class="img" src="'+ url + '" style="width:' + ww + 'px;height:' + hh + 'px;display:none;"/>')
             } else {
@@ -51,34 +63,23 @@
           $loading.css({'visibility': 'hidden', 'display':'none'});
           $('#no_content').css('display', 'inline-block');
         } else {
+          // 处理数据
+          var copyitems = $.extend(true, [], items);
           for (var i = 0; i < items.length; i++) {
-            if (items[i].imgs.length < 1) {
-              continue;
-            } else {
-              var $item = $('<div class="item"></div>');
-              var $item_wrap = $('<div class="item-wrap"></div>');
-              console.log(items[i].imgs.length)
+            if (items[i].imgs > 1) {
               for (var m = 0; m < items[i].imgs.length; m++) {
-                $item_wrap.append(items[i].imgs[m]);
-              };
-
-              if (page === 1) {
-                $item.find('img').addClass('img');
-              } else {
-                $item.find('img').addClass('img lazy');
+                var newobj = $.extend(true, {}, items[i]);
+                newobj.imgs = new Array(items[i].imgs[m]);
+                copyitems.splice(i + m + 1, 0, newobj);
               }
-              console.log($item_wrap);
-              $square.append($item_wrap);
+              copyitems.splice(i, 1);
             }
-            /*
-            var imgdata = items[i].desc;
-            var index = imgdata.indexOf('_');
-            var ww = imgdata.substring(0, index);
-            imgdata = imgdata.substring(index+1);
-            index = imgdata.indexOf('_');
-            var hh = imgdata.substring(0, index);
-            var url = imgdata.substring(index+1);
+          }
 
+          for (var x = 0; x < copyitems.length; x++) {
+            var ww = copyitems[x].imgs[0].width;
+            var hh = copyitems[x].imgs[0].height;
+            var url = copyitems[x].imgs[0].url;
             var $item = $('<div class="item"></div>');
             if (page === 1) {
               $item.append('<div class="item-wrap"><img class="img" src="' + url + '" style="width: 283px; height: ' + 283*hh/ww + 'px; display: inline;" data-width="' + ww + '" + data-height="' + hh + '"></div>');
@@ -86,7 +87,6 @@
               $item.append('<div class="item-wrap"><img class="img lazy" src="/img/sprite.gif" data-src="' + url + '" style="width: 283px; height: ' + 283*hh/ww + 'px; display: inline;" data-width="' + ww + '" + data-height="' + hh + '"></div>');
             }
             $square.append($item);
-            */
           }
         }
       }

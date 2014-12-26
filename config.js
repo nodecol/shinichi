@@ -29,6 +29,7 @@ var config = {
 
   // 程序运行的端口
   port: 3000,
+  https_port: 3111,
 
   // 单页话题数量
   list_topic_count: 10,

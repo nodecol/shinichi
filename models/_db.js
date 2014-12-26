@@ -25,7 +25,7 @@ mongoose.model('User', UserSchema);
 //topic
 var TopicSchema = new Schema({
   title: { type: String },
-  imgs: { type: [String] },
+  imgs: { type: [{}] },
   content: { type: String },
   tags: {type: [{}]},
   author_id: { type: ObjectId },
@@ -46,7 +46,7 @@ var ReplySchema = new Schema({
   topic_id: { type: ObjectId},
   author_id: { type: ObjectId },
   reply_id: { type: ObjectId }, // 回复的回复id
-  is_html: { type: Boolean },
+  is_html: { type: Boolean, default: true },
   update_time: { type: Date, default: Date.now },
   create_time: { type: Date, default: Date.now }
 });
