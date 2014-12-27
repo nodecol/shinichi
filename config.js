@@ -42,7 +42,10 @@ var config = {
   upload: {
     path: path.join(__dirname, 'public/upload/'),
     url: '/public/upload/'
-  }
+  },
+
+  tags: [''],
+  tags_top: ['']
 };
 
 module.exports = config;

@@ -2,7 +2,9 @@ var Topic = require('../models/topic');
 var xmlbuilder = require('xmlbuilder');
 
 exports.index = function (req, res, next) {
-  res.render('square/main');
+  var tag = req.query.tag || '';
+
+  res.render('square/main', { square_tag: tag });
 };
 
 exports.sitemap = function (req, res, next) {

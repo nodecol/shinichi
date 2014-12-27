@@ -3,9 +3,7 @@ var Topic = require('../models/topic');
 exports.getTopics = function (req, res, next) {
   var page = parseInt(req.query.page, 10) || 1;
   page = page > 0 ? page : 1;
-  var tag = req.query.tag || req.session.tag || '';
-
-  req.session.tag = tag;
+  var tag = req.query.tag || '';
 
   Topic.getTopicsByPageAndTag(page, tag, function (err, items) {
     if (err) {

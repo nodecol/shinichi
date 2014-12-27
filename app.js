@@ -77,3 +77,11 @@ var options = {
 https.createServer(options, app).listen(config.https_port, function () {
   debug('Https server listening on port ' + config.https_port);
 });
+
+if (require.main === module) {
+  require('./models/topic').getTopicsLimit5w(function (err, data) {
+    if (err) {
+    } else {
+    }
+  });
+}

@@ -21,7 +21,7 @@ exports.getTopicsByPageAndTag = function (page, tag, callback) {
 
   var query = {};
   if (tag && tag !== '') {
-    query.tags.tag = tag;
+    query['tags.name'] = tag;
   }
   var limit = config.list_topic_count;
   var options = { skip: (page - 1) * limit, limit: limit, sort: '-create_time' };
@@ -80,10 +80,23 @@ exports.getTopicsLimit5w = function (callback) {
       return callback(null, tids);
     }
 
-    Topic.find({ }, '_id', { limit: 50000, sort: '-create_time' }, function (err, tids) {
+    Topic.find({ }, '_id tags', { limit: 50000, sort: '-create_time' }, function (err, tids) {
       if (err) {
         return callback(err);
       }
+
+      // query tags all and top 5
+      var temp = [];
+      var tags = _.pluck(tids, 'tags');
+      for (var i = 0; i < tags.length; i++) {
+        temp = temp.concat(tags[i]);
+      };
+      var countObj = _.countBy(_.pluck(temp, 'name'));
+      if (countObj.hasOwnProperty('')) {
+        delete countObj[''];
+      }
+      config.tags = _.keys(countObj);
+      config.tags_top = _.keys(countObj).slice(0, 5);
 
       tids = _.pluck(tids, '_id');
       cache.set('limit5w', tids, 1000 * 3600 * 24); // 缓存一天

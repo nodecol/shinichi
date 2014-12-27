@@ -1,7 +1,7 @@
 
 (function(){
   var cur_page = 1;
-  var cur_tag = '';
+  var cur_tag = window.square_tag || '';
   var loading_page = false;
   var no_page = false;
   var is_accordant_layout = false;
