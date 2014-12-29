@@ -4,8 +4,9 @@ exports.getTopics = function (req, res, next) {
   var page = parseInt(req.query.page, 10) || 1;
   page = page > 0 ? page : 1;
   var tag = req.query.tag || '';
+  var subTag = req.query.subTag || '';
 
-  Topic.getTopicsByPageAndTag(page, tag, function (err, items) {
+  Topic.getTopicsByPageAndTag(page, tag, subTag, function (err, items) {
     if (err) {
       return next(err);
     }

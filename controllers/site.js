@@ -3,8 +3,12 @@ var xmlbuilder = require('xmlbuilder');
 
 exports.index = function (req, res, next) {
   var tag = req.query.tag || '';
-
-  res.render('square/main', { square_tag: tag });
+  var subTag = req.query.subTag || '';
+  
+  res.render('square/main', {
+    square_tag: tag,
+    sub_tag: subTag
+  });
 };
 
 exports.sitemap = function (req, res, next) {

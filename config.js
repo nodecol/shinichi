@@ -44,8 +44,7 @@ var config = {
     url: '/public/upload/'
   },
 
-  tags: [''],
-  tags_top: ['']
+  tags: ['']
 };
 
 module.exports = config;

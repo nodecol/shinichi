@@ -34,68 +34,7 @@
       <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
-    <style type="text/css">
-        /* Sticky footer styles
-        -------------------------------------------------- */
-        html {
-          position: relative;
-          min-height: 100%;
-        }
-        body {
-          /* Margin bottom by footer height */
-          margin-bottom: 60px;
-          font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;
-        }
-        .footer {
-          position: absolute;
-          bottom: 0;
-          width: 100%;
-          /* Set the fixed height of the footer here */
-          height: 60px;
-          background-color: #f5f5f5;
-        }
-
-
-        /* Custom page CSS
-        -------------------------------------------------- */
-        /* Not required for template or sticky footer method. */
-
-        body > .container {
-          padding: 60px 15px 0;
-        }
-        .container .text-muted {
-          margin: 20px 0;
-        }
-
-        .footer > .container {
-          padding-right: 15px;
-          padding-left: 15px;
-        }
-
-        code {
-          font-size: 80%;
-        }
-
-        #scrollUp {
-          background-color:#777;
-          color:#eee;
-          font-size:40px;
-          line-height:1;
-          text-align:center;
-          text-decoration:none;
-          bottom:20px;
-          right:20px;
-          overflow:hidden;
-          width:46px;
-          height:46px;
-          border:none;
-          opacity:.8
-        }
-        #scrollUp:hover {
-          background-color:#333
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
     <%- block('head').toString() %>
   </head>
 
@@ -114,29 +53,28 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <% if (config.tags_top.length > 0) { %>
-            <%  for (var i=0; i<config.tags_top.length; i++) { %>
-                 <li><a href="/?tag=<%= config.tags_top[i] %>"><%= config.tags_top[i] %></a></li>
+            <% if (config.tags.length > 0) { %>
+            <%  for (var i=0; i<config.tags.length; i++) { %>
+                  <li><a href="/?tag=<%= config.tags[i].tag %>"><%= config.tags[i].tag %></a></li>
+                  <% if (config.tags[i].subTag.length > 0) { %>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">地区 <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                          <% for (var m=0; m<7; m++) { %>
+                            <li><a href="/?tag=<%= config.tags[i].tag %>&subTag=<%= config.tags[i].subTag[m] %>"><%= config.tags[i].subTag[m] %></a></li>
+                          <% } %>
+                          <li class="divider"></li>
+                          <li class="dropdown-header"><%= config.tags[i].tag %></li>
+                        </ul>
+                      </li>
+                  <% } %>
             <%  }  %>
             <%  }  %>
-            <!--<li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li>-->
           </ul>
-          <!--<ul class="nav navbar-nav navbar-right">
-            <li><a href="../navbar/">Default</a></li>
-            <li><a href="../navbar-static-top/">Static top</a></li>
-          </ul>-->
-        </div><!--/.nav-collapse -->
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">关于</a></li>
+          </ul>
+        </div>
       </div>
     </nav>
 
@@ -181,7 +119,7 @@
         }
       })();
     </script>
-    <script>var square_tag = "<%=square_tag%>"</script>
+    <script>var square_tag = "<%=square_tag%>";var sub_tag = "<%=sub_tag%>";</script>
     <%- block('footer').toString() %>
   </body>
 </html>

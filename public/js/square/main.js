@@ -2,16 +2,17 @@
 (function(){
   var cur_page = 1;
   var cur_tag = window.square_tag || '';
+  var cur_subTag = window.sub_tag || '';
   var loading_page = false;
   var no_page = false;
   var is_accordant_layout = false;
-  function loadItems(page, tag) {
+  function loadItems(page, tag, subTag) {
     if (no_page) return;
     loading_page = true;
     $square = $('.square');
     $loading = $('#loading');
     $loading.css({'visibility': 'visible'});
-    $.getJSON("/topics?page=" + page + "&tag=" + tag).done(function (items) {
+    $.getJSON("/topics?page=" + page + "&tag=" + tag + "&subTag=" + subTag).done(function (items) {
       // 过滤掉没有imgs的数据
       items = $.grep(items, function (item) {
         return item.imgs.length > 0;
@@ -150,12 +151,12 @@
     if(get_scroll_height() - get_client_height() - 10 <= get_scroll_top()) {
       if (loading_page) return false;
       cur_page ++;
-      loadItems(cur_page, cur_tag);
+      loadItems(cur_page, cur_tag, cur_subTag);
     }
   }
 
   $(function () {
-    loadItems(cur_page, cur_tag);
+    loadItems(cur_page, cur_tag, cur_subTag);
   });
 
   // 等宽布局

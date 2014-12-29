@@ -11,18 +11,29 @@ var _ = require('lodash');
  * - err, 数据库异常
  * @param {String} page 页数
  * @param {String} tag 标签 可选参数
+ * @param {String} subTag 二级标签 可选参数
  * @param {Function} callback 回调函数
  */
-exports.getTopicsByPageAndTag = function (page, tag, callback) {
+exports.getTopicsByPageAndTag = function (page, tag, subTag, callback) {
   if (typeof tag === 'function') {
     callback = tag;
     tag = '';
+    subTag = '';
+  }
+  if (typeof subTag === 'function') {
+    callback = subTag;
+    subTag = '';
   }
 
   var query = {};
   if (tag && tag !== '') {
-    query['tags.name'] = tag;
+    if (subTag && subTag !== '') {
+      query['$and'] = [{'tags.name': tag}, {'tags.name': subTag}];
+    } else {
+      query['tags.name'] = tag;
+    }
   }
+
   var limit = config.list_topic_count;
   var options = { skip: (page - 1) * limit, limit: limit, sort: '-create_time' };
   var optionsStr = JSON.stringify(query) + JSON.stringify(options);
@@ -85,18 +96,67 @@ exports.getTopicsLimit5w = function (callback) {
         return callback(err);
       }
 
-      // query tags all and top 5
-      var temp = [];
-      var tags = _.pluck(tids, 'tags');
+      // query tags all and subTag top 5
+      var tagList = [];
+      var tempTagName = []; // 临时记录当前已保存的主tag
+      var tags = _.pluck(tids, 'tags'); // 取出所有的标签字段数据
+      // 按主标签，二级标签整理出数据
       for (var i = 0; i < tags.length; i++) {
-        temp = temp.concat(tags[i]);
-      };
-      var countObj = _.countBy(_.pluck(temp, 'name'));
-      if (countObj.hasOwnProperty('')) {
-        delete countObj[''];
+        // 若临时记录里没有保存该主tag，将创建一个
+        var tagListIndex = tempTagName.indexOf(tags[i][0].name);
+        if (tagListIndex < 0) {
+          var tagObj = {};
+          tagObj['tag'] = tags[i][0].name;
+          tagObj['count'] = 1;
+          tagObj['subTag'] = [];
+          tagList.push(tagObj);
+          tempTagName.push(tags[i][0].name);
+          tagListIndex = tempTagName.indexOf(tags[i][0].name); // 修正当前index
+        } else {
+          tagList[tagListIndex]['count'] ++ ;
+        }
+
+        // 将二级标签保存到相应的subTag中
+        if (tags[i].length > 1) {
+          var index = 1;
+          while (index < tags[i].length) {
+            if (tags[i][index].name) {
+              tagList[tagListIndex]['subTag'].push(tags[i][index].name);
+            }
+            index ++ ;
+          }
+        }
       }
-      config.tags = _.keys(countObj);
-      config.tags_top = _.keys(countObj).slice(0, 5);
+
+      // tag排序
+      tagList = _.sortBy(tagList, function (a) {
+        return -a.count;
+      });
+
+      // subTag排序，tagList
+      for (var m = 0; m < tagList.length; m++) {
+        if (tagList[m].subTag.length > 0) {
+          // 计数
+          var countObj = _.countBy(tagList[m].subTag);
+          var countArr = [];
+          // 转数组
+          _.each(countObj, function (value, key) {
+            var obj = {};
+            obj['name'] = key;
+            obj['count'] = value;
+            countArr.push(obj);
+          });
+          // 排序
+          var sortArr = [];
+          sortArr = _.sortBy(countArr, function (a) {
+            return -a.count;
+          });
+          // 赋值
+          tagList[m].subTag = _.pluck(sortArr, 'name');
+        }
+      }
+      config.tags = tagList;
+      // end query tags all and subTag top 5
 
       tids = _.pluck(tids, '_id');
       cache.set('limit5w', tids, 1000 * 3600 * 24); // 缓存一天
