@@ -32,7 +32,7 @@ var config = {
   https_port: 3111,
 
   // 单页话题数量
-  list_topic_count: 10,
+  list_topic_count: 20,
 
   // newrelic 是个用来监控网站性能的服务
   newrelic_key: 'yourkey',

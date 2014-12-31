@@ -62,7 +62,7 @@ if (config.debug) {
 }
 
 app.listen(config.port, function() {
-  debug('Server listening on port %f in %d mode', config.port, app.settings.env);
+  debug('Server listening on port %d in %s mode', config.port, app.settings.env);
 });
 
 module.exports = app;
